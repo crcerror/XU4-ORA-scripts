@@ -37,19 +37,19 @@ function ogst_init() {
 
 function ogst_system() {
 
-    local EMULATOR=$1
-    local SYSTEM=$2
+    local ENGINE=$2
+    local PORT=$1
 
-    # Usecase if EMU and SYSTEM are same then it's very likely for a port
+    # Usecase if PORT and SYSTEM are same then it's very likely for a port
     # This works good for openfodder, cdogs, prince of persia
 
-    [[ $EMULATOR == $SYSTEM ]] && EMULATOR=generic-port
+    [[ $ENGINE == $PORT ]] && ENGINE=generic-port
 
-        case $EMULATOR in
+        case $ENGINE in
             sdlpop|solarus|alephone|generic-port)
                ogst_off
 
-               until [[ -n $(pgrep -f runcommand-onstart.sh) ]]; do
+               until [[ -z $(pgrep -f runcommand-onstart.sh) ]]; do
                    sleep 1
                done
 
