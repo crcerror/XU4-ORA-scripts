@@ -23,8 +23,6 @@ function get_ogst_param() {
     while read -r f1 f2 f3 f4; do
         if [[ $EMULATOR == $f2 && $SYSTEM == $f3 ]]; then
             BINARY="$f1"
-            SYSTEM="$f3"
-            EMULATOR="$f2"
             SLEEP="$f4"
         fi
     done < <(tr -d '\r' < "$CONFIGFILE")
@@ -49,35 +47,29 @@ function ogst_init() {
 
 function system_ai() {
 
-    # Usecase if PORT and SYSTEM are same then it's very likely for a port
-    # This works good for openfodder, cdogs, prince of persia
-
                until [[ -z $(pgrep -f runcommand-onstart.sh) ]]; do
                    sleep 0.5
                done
 
                local c_pid="$(pgrep -f -n runcommand.sh)"
-               local c2pid=$c_pid
                local old_pid
 
                SLEEP=0
                until [[ $c_pid == $old_pid && $SLEEP -gt 2 ]]; do
                    ((SLEEP++))
                    sleep 1
-                   c_pid=$(pgrep -P $c_pid) && old_pid=$c_pid || c_pid=$c2pid
+                   c_pid=$(pgrep -P $c_pid) && old_pid=$c_pid
                done
                echo "$c_pid $SLEEP"
 }
-
 
 function system_data() {
     local EMULATOR=$1
     local SLEEP=$2
 
-    # Usecase if PORT and SYSTEM are same then it's very likely for a port
-    # This works good for openfodder, cdogs, prince of persia
-
-              if [[ $BINARY == retroarch ]]; then
+              # Return if emulator is libretro core and if sleeptimer is negative
+              # You may change sleeptimer to postive value if there are problems with the core
+              if [[ $EMULATOR == lr-* && $SLEEP -lt 0 ]]; then
                   ogst_init
                   return
               fi
@@ -122,7 +114,7 @@ CASE=$1
 
 readonly SCRIPTDIR="$(cd "$(dirname "$0")" && pwd)"
 readonly CONFIGFILE="${SCRIPTDIR}/ogst_ai.cfg"
-[[ $EMULATOR == lr* ]] && BINARY="retroarch"
+
 case ${CASE,,} in
     ogst_show_es)
         ogst_show_es $SYSTEM
@@ -134,6 +126,7 @@ case ${CASE,,} in
             ogst_off
             cpid="$(system_ai)"
             SLEEP=$((${cpid#* }+2))
+            [[ $EMULATOR == lr-* ]] && SLEEP=-1 #Set timer to -1 to identify retroarch emulator
             PID="${cpid% *}"
             BINARY="$(get_pid2name $PID)"
             echo "$BINARY $EMULATOR $SYSTEM $SLEEP" >> "$CONFIGFILE"
