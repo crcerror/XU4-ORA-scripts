@@ -9,8 +9,8 @@
 #
 # How it works? It registers all binaries to a cfg located next to script
 # usually it's $HOME/ogst/ogst_ai.cfg. There the binary of emulator
-# system and emulator is listed. The number is the sleep timer after
-# such seconds the display is activated!
+# system and emulator is listed. The number is the sleep timer after such seconds the 
+# display is activated! If the sleeptimer is less then 0 the picture is showed instantly
 #
 # How to use:
 # edit runcommand-onstart.sh and add line $HOME/ogst/ogst_ai.sh ogst_show_system $1 $2
@@ -58,7 +58,7 @@ function system_ai() {
                until [[ $c_pid == $old_pid && $SLEEP -gt 2 ]]; do
                    ((SLEEP++))
                    sleep 1
-                   c_pid=$(pgrep -P $c_pid) && old_pid=$c_pid
+                   c_pid=$(pgrep -P $c_pid) && old_pid=$c_pid || c_pid=0
                done
                echo "$c_pid $SLEEP"
 }
