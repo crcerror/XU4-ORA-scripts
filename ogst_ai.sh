@@ -52,13 +52,14 @@ function system_ai() {
                done
 
                local c_pid="$(pgrep -f -n runcommand.sh)"
+               local c2pid=$c_pid
                local old_pid
 
                SLEEP=0
                until [[ $c_pid == $old_pid && $SLEEP -gt 2 ]]; do
                    ((SLEEP++))
                    sleep 1
-                   c_pid=$(pgrep -P $c_pid) && old_pid=$c_pid || c_pid=0
+                   c_pid=$(pgrep -P $c_pid) && old_pid=$c_pid || c_pid=$c2pid
                done
                echo "$c_pid $SLEEP"
 }
