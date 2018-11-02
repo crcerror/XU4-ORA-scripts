@@ -20,9 +20,9 @@ else
     button="Block WiFi"
 fi
 
-dialog --title "Change WiFi status" --defaultno \
-       --backtitle "RFKILL dialog - enable/disable WiFi adapters" \
-       --yes-button "$button" --no-button "Cancel" \
-       --yesno "$ip_text" 0 0
+whiptail --title "Change WiFi status" --defaultno \
+         --backtitle "RFKILL dialog - enable/disable WiFi adapters" \
+         --yes-button "$button" --no-button "Cancel" \
+         --yesno "$ip_text" 0 0
 
 [ $? -eq 0 ] && $action
