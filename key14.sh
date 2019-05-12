@@ -2,7 +2,7 @@
 # Make right button work
 # by cyperghost
 
-[ -z $1 ] && leftswitch=24 || leftswitch=$1
+[ -z $1 ] && rightswitch=24 || rightswitch=$1
 
 echo $rightswitch > /sys/class/gpio/export
 echo in > /sys/class/gpio/gpio$rightswitch/direction
